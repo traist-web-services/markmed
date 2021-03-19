@@ -1,0 +1,12 @@
+appId: com.example.app
+productName: Markmed
+copyright: Copyright © 2021 Joe Innes
+directories:
+  output: dist
+  buildResources: resources
+files:
+  - from: .
+    filter:
+      - package.json
+      - app
+publish: null
