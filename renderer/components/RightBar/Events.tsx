@@ -45,22 +45,20 @@ export default function Events() {
       setDisplayEvents([...thisFile, ...otherFiles]);
     };
     setInitialState();
-    return () => {
-      setDisplayEvents([]);
-      setOtherFilesEvents([]);
-    };
-  }, [notesFilesFlat, selectedDate]);
+  }, [notesFilesFlat, selectedDate, currentFileContent]);
 
   useEffect(() => {
     const thisFile = parseEvents(
       editorContent,
+      currentFileName,
       formatISO(selectedDate, { representation: "date" })
-    ).filter((el) => isSameDay(el.startTime, selectedDate));
+    ).filter((el) => {
+      return isSameDay(el.startTime, selectedDate);
+    });
     const merged = [...thisFile, ...otherFilesEvents];
     merged.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
     setDisplayEvents(merged);
-    return () => setDisplayEvents([]);
-  }, [editorContent, selectedDate]);
+  }, [editorContent, selectedDate, currentFileContent]);
 
   const color = useColorModeValue("brand.900", "brand.200");
 
