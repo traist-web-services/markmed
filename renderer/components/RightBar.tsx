@@ -34,7 +34,7 @@ export default function RightBar() {
         color={color}
         p={4}
         h="100%"
-        overflowY="auto"
+        overflowY="hidden"
         pos="relative"
       >
         <Box

@@ -28,7 +28,7 @@ export default function useEvents() {
     eventString: string,
     fromFilePath: string,
     fromFile?: string
-  ) => {
+  ): Event => {
     const [_, time, date, description] = eventString.match(eventRegex);
 
     const eventDate =

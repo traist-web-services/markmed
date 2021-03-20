@@ -63,11 +63,17 @@ export default function Events() {
   const color = useColorModeValue("brand.900", "brand.200");
 
   return (
-    <Box w="100%" mb={4}>
-      <Heading mb={2} fontSize="2xl">
+    <VStack w="100%" h="25%" pos="relative">
+      <Heading pb={2} fontSize="2xl">
         Events
       </Heading>
-      <SimpleGrid columns={2} templateColumns="auto 1fr" mb={4}>
+      <SimpleGrid
+        columns={2}
+        templateColumns="auto 1fr"
+        flex={1}
+        overflowY="auto"
+        maxH="100%"
+      >
         {displayEvents.map((event, index) => {
           const formattedStartTime = format(event.startTime, "HHmm");
           const formattedEndTime = format(event.endTime, "HHmm");
@@ -105,6 +111,6 @@ export default function Events() {
           );
         })}
       </SimpleGrid>
-    </Box>
+    </VStack>
   );
 }
