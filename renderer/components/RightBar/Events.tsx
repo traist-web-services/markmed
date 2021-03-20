@@ -3,11 +3,8 @@ import { Fragment, useContext, useEffect, useState } from "react";
 import {
   Badge,
   Box,
-  Flex,
   Heading,
-  HStack,
   SimpleGrid,
-  Spacer,
   Text,
   useColorModeValue,
   VStack,
@@ -48,7 +45,11 @@ export default function Events() {
       setDisplayEvents([...thisFile, ...otherFiles]);
     };
     setInitialState();
-  }, [notesFilesFlat, currentFileName, currentFileContent, selectedDate]);
+    return () => {
+      setDisplayEvents([]);
+      setOtherFilesEvents([]);
+    };
+  }, [notesFilesFlat, selectedDate]);
 
   useEffect(() => {
     const thisFile = parseEvents(
@@ -58,7 +59,8 @@ export default function Events() {
     const merged = [...thisFile, ...otherFilesEvents];
     merged.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
     setDisplayEvents(merged);
-  }, [editorContent, currentFileName, currentFileContent]);
+    return () => setDisplayEvents([]);
+  }, [editorContent, selectedDate]);
 
   const color = useColorModeValue("brand.900", "brand.200");
 
@@ -85,11 +87,7 @@ export default function Events() {
                   event.fromFile && (
                   <Badge
                     onClick={() => {
-                      readFile(event.fromFilePath);
-                      dispatch({
-                        type: "SET_SELECTED_DATE",
-                        payload: parseISO(event.fromFile),
-                      });
+                      readFile(event.fromFilePath, parseISO(event.fromFile));
                     }}
                   >
                     {event.fromFile}

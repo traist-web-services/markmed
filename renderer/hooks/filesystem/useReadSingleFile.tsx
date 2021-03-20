@@ -9,7 +9,7 @@ import { AppDispatchContext } from "../../contexts/AppContext";
 export default function useReadSingleFile() {
   const dispatch = useContext(AppDispatchContext);
 
-  const readFile = async (filename: string) => {
+  const readFile = async (filename: string, selectedDate?: Date) => {
     if (!ipcRenderer) {
       return;
     }
@@ -17,7 +17,11 @@ export default function useReadSingleFile() {
       const data = await fs.readFile(filename, "utf-8");
       dispatch({
         type: "LOAD_FILE_FROM_DISK",
-        payload: { currentFileName: filename, currentFileContent: data },
+        payload: {
+          currentFileName: filename,
+          currentFileContent: data,
+          selectedDate,
+        },
       });
     } catch (e) {
       console.error(e);

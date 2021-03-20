@@ -10,26 +10,20 @@ import { formatISO, isSameDay } from "date-fns";
 
 import { Badge, Button } from "@chakra-ui/react";
 
-import { AppDispatchContext, AppStateContext } from "../../contexts/AppContext";
+import { AppStateContext } from "../../contexts/AppContext";
 import { useReadSingleFile } from "../../hooks/useFilesystem";
 
 export default function DateElement({ date }) {
   const { notesDir, selectedDate } = useContext(AppStateContext);
   const { readFile } = useReadSingleFile();
-  const dispatch = useContext(AppDispatchContext);
 
   const selectDate = async (date: Date) => {
     if (!ipcRenderer) {
       return;
     }
-
     const filename = `${formatISO(date, { representation: "date" })}.md`;
     const fileToRead = join(notesDir, "Dailies", filename);
-    readFile(fileToRead);
-    dispatch({
-      type: "SET_SELECTED_DATE",
-      payload: date,
-    });
+    readFile(fileToRead, date);
   };
   return (
     <Button

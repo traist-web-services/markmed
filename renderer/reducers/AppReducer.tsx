@@ -1,11 +1,17 @@
 export default function AppReducer(state, action) {
   switch (action.type) {
     case "LOAD_FILE_FROM_DISK":
-      const { currentFileContent, currentFileName } = action.payload;
-      return {
-        ...state,
+      const {
         currentFileContent,
         currentFileName,
+        selectedDate: selectedDateFile,
+      } = action.payload;
+      return {
+        ...state,
+        editorContent: currentFileContent,
+        currentFileContent,
+        currentFileName,
+        selectedDate: selectedDateFile ?? state.selectedDate,
       };
     case "SET_SELECTED_DATE":
       const selectedDate = action.payload;
