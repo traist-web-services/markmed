@@ -9,6 +9,7 @@ export const AppContextDefault = {
   editorContent: "",
   notesDir: "",
   notesDirTree: [],
+  notesFilesFlat: [],
   selectedDate: new Date(),
 };
 

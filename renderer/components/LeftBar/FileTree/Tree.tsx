@@ -17,6 +17,9 @@ export default function Tree({ filter }) {
 
   const TreeRecursive = useCallback(
     ({ data = [] }) => {
+      data.filter(
+        (el) => el.name.toLowerCase().indexOf(filter.toLowerCase()) > -1
+      );
       data.sort((a, b) => (a.name < b.name ? 1 : a.name > b.name ? -1 : 0));
 
       const tree = data.map((item, index) => {
@@ -45,7 +48,7 @@ export default function Tree({ filter }) {
       });
       return <>{tree.sort()}</>;
     },
-    [notesDirTree]
+    [notesDirTree, filter]
   );
   return <TreeRecursive data={notesDirTree} />;
 }

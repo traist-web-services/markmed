@@ -33,7 +33,6 @@ export default function AppReducer(state, action) {
       };
     case "SET_NOTES_DIR_TREE":
       const { notesDirTree, notesFilesFlat } = action.payload;
-      console.log(notesDirTree, notesFilesFlat);
       return {
         ...state,
         notesDirTree,

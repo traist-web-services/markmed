@@ -59,6 +59,7 @@ export default function LeftBar() {
               mb={2}
               w="100%"
               bg="brand.50"
+              color="brand.900"
               borderColor="brand.900"
               value={filter}
               onChange={(e) => {
