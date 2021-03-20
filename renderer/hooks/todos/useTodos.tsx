@@ -58,7 +58,7 @@ export default function useToDos() {
   };
 
   const findToDosAllFiles = async (
-    currentDateAsString: string
+    currentDateAsString?: string
   ): Promise<ToDo[]> => {
     const todos = await Promise.all(
       notesFilesFlat.map(async (file) => {
@@ -66,15 +66,15 @@ export default function useToDos() {
           return;
         }
         const fileDate = file.name.substring(0, file.name.length - 3);
-        if (fileDate === currentDateAsString) {
+        if (currentDateAsString && fileDate === currentDateAsString) {
           return [];
         }
         const data = await fs.readFile(file.path, "utf-8");
-        console.log(parseToDos(data, file.path, fileDate));
         return parseToDos(data, file.path, fileDate).filter(
           (todo) =>
             !todo.complete ||
-            isSameDay(todo.date, parseISO(currentDateAsString))
+            (currentDateAsString &&
+              isSameDay(todo.date, parseISO(currentDateAsString)))
         );
       })
     );
@@ -91,6 +91,8 @@ export default function useToDos() {
     const oldEventRegexp = new RegExp(
       `- \\[(.{0,1})\\] (\\d{4}-\\d{2}-\\d{2} ){0,1}${toDo}`
     );
+
+    // TODO: This does not just toggle the checkbox, it will also remove a date if one is associated
     const newFileContents = fileData.replace(oldEventRegexp, newEventAsString);
     await fs.writeFile(filename, newFileContents, "utf8");
     if (filename === currentFileName) {

@@ -20,6 +20,7 @@ import {
 import useToDos from "../../hooks/todos/useTodos";
 import { AppStateContext } from "../../contexts/AppContext";
 import formatISO from "date-fns/formatISO";
+import { isSameDay } from "date-fns";
 
 export default function ToDoList() {
   const [thisDaysToDos, setThisDaysToDos] = useState([]);
@@ -33,18 +34,34 @@ export default function ToDoList() {
   const { findToDosAllFiles, parseToDos, toggleToDoComplete } = useToDos();
 
   useEffect(() => {
-    setThisDaysToDos(parseToDos(editorContent, currentFileName));
-  }, [currentFileContent, editorContent]);
+    const initialSetup = async () => {
+      const toDosFromEditor = parseToDos(editorContent, currentFileName);
+      const toDosforSelectedDayFromOtherFiles = await findToDosAllFiles(
+        formatISO(selectedDate, { representation: "date" })
+      );
+      setThisDaysToDos([
+        ...toDosFromEditor,
+        ...toDosforSelectedDayFromOtherFiles.filter((todo) =>
+          isSameDay(todo.date, selectedDate)
+        ),
+      ]);
+    };
+    initialSetup();
+    return () => setThisDaysToDos([]);
+  }, [currentFileContent, editorContent, selectedDate]);
 
   useEffect(() => {
     const updateToDosFromAllFiles = async () => {
-      const allToDosFromFiles = await findToDosAllFiles(
-        formatISO(selectedDate, { representation: "date" })
-      );
-      setAllToDos(allToDosFromFiles);
+      const allToDosFromFiles = await findToDosAllFiles();
+      setAllToDos([
+        ...allToDosFromFiles,
+        ...thisDaysToDos.filter((el) => !el.complete),
+      ]);
     };
     updateToDosFromAllFiles();
-  }, [selectedDate]);
+    return () => setAllToDos([]);
+  }, [selectedDate, currentFileContent]);
+
   return (
     <Box w="100%" h="100%">
       <Heading fontSize="2xl" pb={2}>
@@ -65,7 +82,29 @@ export default function ToDoList() {
 
         <TabPanels h="100%" pos="relative">
           <TabPanel h="100%">
-            {thisDaysToDos.map((todo, index) => (
+            {thisDaysToDos
+              .filter((el) => isSameDay(el.date, selectedDate))
+              .map((todo, index) => (
+                <HStack key={index}>
+                  <Checkbox
+                    mr={2}
+                    isChecked={todo.complete}
+                    onClick={() =>
+                      toggleToDoComplete(
+                        todo.todo,
+                        !todo.complete,
+                        todo.fromFilePath
+                      )
+                    }
+                  />
+                  <Text>{todo.todo}</Text>
+                  <Spacer />
+                  <Badge>{todo.fromFilePath.match(/\d{4}-\d{2}-\d{2}/)}</Badge>
+                </HStack>
+              ))}
+          </TabPanel>
+          <TabPanel>
+            {allToDos.map((todo, index) => (
               <HStack key={index}>
                 <Checkbox
                   mr={2}
@@ -79,26 +118,8 @@ export default function ToDoList() {
                   }
                 />
                 <Text>{todo.todo}</Text>
-              </HStack>
-            ))}
-          </TabPanel>
-          <TabPanel>
-            {allToDos.map((todo, index) => (
-              <HStack key={index}>
-                <Checkbox
-                  mr={2}
-                  isChecked={todo.checked}
-                  onClick={() =>
-                    toggleToDoComplete(
-                      todo.todo,
-                      !todo.complete,
-                      todo.fromFilePath
-                    )
-                  }
-                />
-                <Text>{todo.todo}</Text>
                 <Spacer />
-                <Badge>{todo.fromFile.match(/\d{4}-\d{2}-\d{2}/)}</Badge>
+                <Badge>{todo.fromFilePath.match(/\d{4}-\d{2}-\d{2}/)}</Badge>
               </HStack>
             ))}
           </TabPanel>
