@@ -44,14 +44,8 @@ export default function AppReducer(state, action) {
         notesDirTree,
         notesFilesFlat,
       };
-    case "TOGGLE_TO_DO": {
-      // TODO: This isn't working for some reason, seems to be a problem in the 'replace' method
-      const todo = action.payload;
-      const regex = new RegExp(`- \\[.{0,1}\\].${todo}`);
-      const toDoInContent = state.editorContent.match(/- \[(.{0,1})\].*/);
-      const isComplete = toDoInContent[1] && toDoInContent[1] !== " ";
-      const replacementText = `- [${isComplete ? " " : "x"}] ${todo}`;
-      const newContent = state.editorContent.replace(regex, replacementText);
+    case "RELOAD_FILE": {
+      const newContent = action.payload;
       return {
         ...state,
         editorContent: newContent,

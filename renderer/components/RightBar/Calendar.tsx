@@ -43,8 +43,8 @@ export default function Calendar() {
   }
 
   return (
-    <Box w="100%" mb={4}>
-      <Heading mb={2} fontSize="2xl">
+    <Box w="100%" pb={4}>
+      <Heading pb={2} fontSize="2xl">
         Calendar
       </Heading>
       <Box bg={bg} p={4} pt={2} rounded={8}>

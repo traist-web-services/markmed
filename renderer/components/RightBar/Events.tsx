@@ -63,7 +63,7 @@ export default function Events() {
   const color = useColorModeValue("brand.900", "brand.200");
 
   return (
-    <VStack w="100%" h="100%" pos="relative">
+    <VStack w="100%" h="100%">
       <Heading pb={2} fontSize="2xl" w="100%">
         Events
       </Heading>

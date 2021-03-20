@@ -19,19 +19,32 @@ import {
 
 import useToDos from "../../hooks/todos/useTodos";
 import { AppStateContext } from "../../contexts/AppContext";
+import formatISO from "date-fns/formatISO";
 
 export default function ToDoList() {
   const [thisDaysToDos, setThisDaysToDos] = useState([]);
   const [allToDos, setAllToDos] = useState([]);
-  const { currentFileContent, currentFileName, editorContent } = useContext(
-    AppStateContext
-  );
-  const { parseToDos } = useToDos();
+  const {
+    currentFileContent,
+    currentFileName,
+    editorContent,
+    selectedDate,
+  } = useContext(AppStateContext);
+  const { findToDosAllFiles, parseToDos, toggleToDoComplete } = useToDos();
 
   useEffect(() => {
     setThisDaysToDos(parseToDos(editorContent, currentFileName));
   }, [currentFileContent, editorContent]);
 
+  useEffect(() => {
+    const updateToDosFromAllFiles = async () => {
+      const allToDosFromFiles = await findToDosAllFiles(
+        formatISO(selectedDate, { representation: "date" })
+      );
+      setAllToDos(allToDosFromFiles);
+    };
+    updateToDosFromAllFiles();
+  }, [selectedDate]);
   return (
     <Box w="100%" h="100%">
       <Heading fontSize="2xl" pb={2}>
@@ -54,7 +67,17 @@ export default function ToDoList() {
           <TabPanel h="100%">
             {thisDaysToDos.map((todo, index) => (
               <HStack key={index}>
-                <Checkbox mr={2} isChecked={todo.complete} />
+                <Checkbox
+                  mr={2}
+                  isChecked={todo.complete}
+                  onClick={() =>
+                    toggleToDoComplete(
+                      todo.todo,
+                      !todo.complete,
+                      todo.fromFilePath
+                    )
+                  }
+                />
                 <Text>{todo.todo}</Text>
               </HStack>
             ))}
@@ -62,7 +85,17 @@ export default function ToDoList() {
           <TabPanel>
             {allToDos.map((todo, index) => (
               <HStack key={index}>
-                <Checkbox mr={2} isChecked={todo.checked} />
+                <Checkbox
+                  mr={2}
+                  isChecked={todo.checked}
+                  onClick={() =>
+                    toggleToDoComplete(
+                      todo.todo,
+                      !todo.complete,
+                      todo.fromFilePath
+                    )
+                  }
+                />
                 <Text>{todo.todo}</Text>
                 <Spacer />
                 <Badge>{todo.fromFile.match(/\d{4}-\d{2}-\d{2}/)}</Badge>

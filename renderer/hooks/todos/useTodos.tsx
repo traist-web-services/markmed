@@ -2,9 +2,9 @@ import { promises as fs } from "fs";
 
 import { useContext } from "react";
 
-import { parseISO } from "date-fns";
+import { isSameDay, parseISO } from "date-fns";
 
-import { AppStateContext } from "../../contexts/AppContext";
+import { AppDispatchContext, AppStateContext } from "../../contexts/AppContext";
 
 interface ToDo {
   complete: boolean;
@@ -15,7 +15,8 @@ interface ToDo {
 }
 
 export default function useToDos() {
-  const { notesFilesFlat } = useContext(AppStateContext);
+  const dispatch = useContext(AppDispatchContext);
+  const { currentFileName, notesFilesFlat } = useContext(AppStateContext);
   const toDoRegex = /- \[(.{0,1})\] (\d{4}-\d{2}-\d{2} ){0,1}(.*).*/;
   const parseToDo = (
     toDoString: string,
@@ -69,13 +70,33 @@ export default function useToDos() {
           return [];
         }
         const data = await fs.readFile(file.path, "utf-8");
+        console.log(parseToDos(data, file.path, fileDate));
         return parseToDos(data, file.path, fileDate).filter(
-          (todo) => !todo.complete
+          (todo) =>
+            !todo.complete ||
+            isSameDay(todo.date, parseISO(currentDateAsString))
         );
       })
     );
     return todos.flat();
   };
 
-  return { parseToDos, findToDosAllFiles };
+  const toggleToDoComplete = async (
+    toDo: string,
+    shouldComplete: boolean,
+    filename: string
+  ) => {
+    const fileData = await fs.readFile(filename, "utf8");
+    const newEventAsString = `- [${shouldComplete ? "x" : " "}] ${toDo}`;
+    const oldEventRegexp = new RegExp(
+      `- \\[(.{0,1})\\] (\\d{4}-\\d{2}-\\d{2} ){0,1}${toDo}`
+    );
+    const newFileContents = fileData.replace(oldEventRegexp, newEventAsString);
+    await fs.writeFile(filename, newFileContents, "utf8");
+    if (filename === currentFileName) {
+      dispatch({ type: "RELOAD_FILE", payload: newFileContents });
+    }
+  };
+
+  return { parseToDos, findToDosAllFiles, toggleToDoComplete };
 }
