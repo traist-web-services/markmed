@@ -64,7 +64,7 @@ export default function Events() {
 
   return (
     <VStack w="100%" h="25%" pos="relative">
-      <Heading pb={2} fontSize="2xl">
+      <Heading pb={2} fontSize="2xl" w="100%">
         Events
       </Heading>
       <SimpleGrid
