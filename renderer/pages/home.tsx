@@ -9,7 +9,7 @@ import Head from "next/head";
 
 import { formatISO } from "date-fns";
 
-import { Box, HStack, useColorModeValue } from "@chakra-ui/react";
+import { Box, HStack, useColorModeValue, useToken } from "@chakra-ui/react";
 
 import {
   AppDispatchContext,
@@ -30,6 +30,8 @@ const Home = () => {
 
   const bg = useColorModeValue("brand.200", "brand.800");
   const color = useColorModeValue("brand.900", "brand.200");
+
+  const [resolvedBg, resolvedColor] = useToken("colors", [bg, color]);
 
   useEffect(() => {
     const setUp = async () => {
@@ -78,19 +80,21 @@ const Home = () => {
       </Head>
       <style global jsx>{`
         ::-webkit-scrollbar {
-          background-color: ${color};
+          background: ${resolvedBg};
+          width: 0.5rem;
         }
 
         ::-webkit-scrollbar-track {
-          background-color: #000;
+          background-color: ${resolvedBg};
         }
 
         ::-webkit-scrollbar-thumb {
-          background: #000;
+          background: ${resolvedColor};
+          border-radius: 1000px;
         }
 
         ::-webkit-scrollbar-thumb:window-inactive {
-          background: #000;
+          background: ${resolvedColor};
         }
       `}</style>
 

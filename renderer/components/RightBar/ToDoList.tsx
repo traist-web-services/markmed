@@ -33,7 +33,7 @@ export default function ToDoList() {
   }, [currentFileContent, editorContent]);
 
   return (
-    <Box w="100%" h="75%">
+    <Box w="100%" h="100%">
       <Heading fontSize="2xl" pb={2}>
         To Do
       </Heading>

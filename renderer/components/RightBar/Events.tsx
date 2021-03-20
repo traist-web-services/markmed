@@ -63,16 +63,15 @@ export default function Events() {
   const color = useColorModeValue("brand.900", "brand.200");
 
   return (
-    <VStack w="100%" h="25%" pos="relative">
+    <VStack w="100%" h="100%" pos="relative">
       <Heading pb={2} fontSize="2xl" w="100%">
         Events
       </Heading>
       <SimpleGrid
         columns={2}
         templateColumns="auto 1fr"
-        flex={1}
         overflowY="auto"
-        maxH="100%"
+        w="100%"
       >
         {displayEvents.map((event, index) => {
           const formattedStartTime = format(event.startTime, "HHmm");

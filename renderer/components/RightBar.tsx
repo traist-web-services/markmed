@@ -47,9 +47,15 @@ export default function RightBar() {
           roundedBottom="full"
           transition="height 2000ms"
         ></Box>
-        <Calendar />
-        <Events />
-        <ToDoList />
+        <Box h="25%" w="100%">
+          <Calendar />
+        </Box>
+        <Box h="25%" w="100%">
+          <Events />
+        </Box>
+        <Box h="50%" w="100%">
+          <ToDoList />
+        </Box>
       </VStack>
     </>
   );
