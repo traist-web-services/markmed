@@ -1,3 +1,5 @@
+import { join } from "path";
+
 import { Fragment, useContext } from "react";
 
 import {
@@ -24,11 +26,14 @@ import {
 
 import { AppStateContext, AppDispatchContext } from "../../contexts/AppContext";
 
+import { useReadSingleFile } from "../../hooks/useFilesystem";
+
 import DateElement from "./DateElement";
 
 export default function Calendar() {
-  const { displayMonth } = useContext(AppStateContext);
+  const { displayMonth, notesDir } = useContext(AppStateContext);
   const dispatch = useContext(AppDispatchContext);
+  const { readFile } = useReadSingleFile();
   const bg = useColorModeValue("brand.100", "brand.700");
 
   const firstMonday = startOfISOWeek(startOfMonth(displayMonth));
@@ -78,12 +83,18 @@ export default function Calendar() {
           <Button
             variant="unstyled"
             colorScheme="brand"
-            onClick={() =>
+            onClick={() => {
               dispatch({
                 type: "SET_DISPLAY_MONTH",
                 payload: new Date(),
-              })
-            }
+              });
+              const date = new Date();
+              const filename = `${formatISO(date, {
+                representation: "date",
+              })}.md`;
+              const fileToRead = join(notesDir, "Dailies", filename);
+              readFile(fileToRead, date);
+            }}
             _active={{
               outline: "0px solid transparent",
               border: "0px",

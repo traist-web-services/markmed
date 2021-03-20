@@ -15,6 +15,9 @@ import {
   Text,
   Badge,
   Spacer,
+  VStack,
+  Grid,
+  Flex,
 } from "@chakra-ui/react";
 
 import useToDos from "../../hooks/todos/useTodos";
@@ -63,8 +66,8 @@ export default function ToDoList() {
   }, [selectedDate, currentFileContent]);
 
   return (
-    <Box w="100%" h="100%">
-      <Heading fontSize="2xl" pb={2}>
+    <VStack w="100%" h="100%" overflowY="hidden" pos="relative">
+      <Heading fontSize="2xl" pb={2} w="100%">
         To Do
       </Heading>
       <Tabs
@@ -72,16 +75,20 @@ export default function ToDoList() {
         variant="soft-rounded"
         size="sm"
         colorScheme="brand"
-        h="100%"
         pos="relative"
+        h="100%"
+        w="100%"
+        pb={
+          20 /* This is an ugly hack, I should work out how to do this properly rather than just pushing the content up */
+        }
       >
         <TabList>
           <Tab>Today's To Dos</Tab>
           <Tab>All To Dos</Tab>
         </TabList>
 
-        <TabPanels h="100%" pos="relative">
-          <TabPanel h="100%">
+        <TabPanels h="100%" overflowY="hidden" position="relative">
+          <TabPanel h="100%" overflowY="scroll">
             {thisDaysToDos
               .filter((el) => isSameDay(el.date, selectedDate))
               .map((todo, index) => (
@@ -103,9 +110,9 @@ export default function ToDoList() {
                 </HStack>
               ))}
           </TabPanel>
-          <TabPanel>
+          <TabPanel h="100%" overflowY="scroll" as={VStack}>
             {allToDos.map((todo, index) => (
-              <HStack key={index}>
+              <HStack key={index} w="100%">
                 <Checkbox
                   mr={2}
                   isChecked={todo.complete}
@@ -125,6 +132,7 @@ export default function ToDoList() {
           </TabPanel>
         </TabPanels>
       </Tabs>
-    </Box>
+      <Spacer />
+    </VStack>
   );
 }

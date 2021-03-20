@@ -8,7 +8,12 @@ import { EditorState } from "@codemirror/state";
 
 import { differenceInSeconds, formatISO } from "date-fns";
 
-import { Box } from "@chakra-ui/react";
+import {
+  Box,
+  useColorMode,
+  useColorModeValue,
+  useToken,
+} from "@chakra-ui/react";
 
 import { AppStateContext, AppDispatchContext } from "../../contexts/AppContext";
 
@@ -19,9 +24,21 @@ const CM = () => {
     AppStateContext
   );
 
+  const { colorMode } = useColorMode();
   const [lastSave, setLastSave] = useState(new Date());
   const dispatch = useContext(AppDispatchContext);
   const editor = useRef<EditorView>();
+
+  const bg = useColorModeValue("brand.200", "brand.800");
+  const color = useColorModeValue("brand.900", "brand.200");
+
+  const [resolvedBg, resolvedColor] = useToken("colors", [bg, color]);
+
+  const caretColor = EditorView.theme({
+    "& *": {
+      caretColor: resolvedColor,
+    },
+  });
 
   const save = () => {
     if (!editor.current.state.doc.toString() || !currentFileName) {
@@ -58,7 +75,7 @@ const CM = () => {
     editor.current = new EditorView({
       state: EditorState.create({
         doc: initialContent,
-        extensions: [...Extensions, updateListener()],
+        extensions: [...Extensions, caretColor, updateListener()],
       }),
 
       parent: el as Element,
@@ -81,7 +98,7 @@ const CM = () => {
       ipcRenderer.removeListener("before-quit", save);
       editor?.current.destroy();
     };
-  }, [currentFileContent, currentFileName, selectedDate]);
+  }, [currentFileContent, currentFileName, selectedDate, colorMode]);
 
   return (
     <Box w="60ch" margin="auto" h="100%" overflowY="auto">

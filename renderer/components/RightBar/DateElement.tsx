@@ -1,8 +1,4 @@
-import fs from "fs";
-
 import { join } from "path";
-
-import { ipcRenderer } from "electron";
 
 import { useContext } from "react";
 
@@ -18,9 +14,6 @@ export default function DateElement({ date }) {
   const { readFile } = useReadSingleFile();
 
   const selectDate = async (date: Date) => {
-    if (!ipcRenderer) {
-      return;
-    }
     const filename = `${formatISO(date, { representation: "date" })}.md`;
     const fileToRead = join(notesDir, "Dailies", filename);
     readFile(fileToRead, date);

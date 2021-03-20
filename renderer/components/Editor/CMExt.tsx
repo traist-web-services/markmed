@@ -8,13 +8,15 @@ import {
 import { EditorState, Extension } from "@codemirror/state";
 import { history, historyKeymap } from "@codemirror/history";
 import { indentOnInput } from "@codemirror/language";
-import { defaultKeymap } from "@codemirror/commands";
-import { bracketMatching } from "@codemirror/matchbrackets";
+import {
+  defaultKeymap,
+  defaultTabBinding,
+  indentLess,
+  indentMore,
+} from "@codemirror/commands";
 import { closeBrackets, closeBracketsKeymap } from "@codemirror/closebrackets";
 import { searchKeymap, highlightSelectionMatches } from "@codemirror/search";
 import { markdown } from "@codemirror/lang-markdown";
-
-import { useColorModeValue } from "@chakra-ui/react";
 
 export const MainTheme = EditorView.theme(
   {
@@ -55,9 +57,7 @@ export const MainTheme = EditorView.theme(
     ".cm-tooltip-autocomplete": {
       "& > ul > li[aria-selected]": {},
     },
-    ".cm-scroller": {
-      outline: "none",
-    },
+    ".cm-scroller": {},
   },
   { dark: false }
 );
@@ -159,7 +159,6 @@ export const Extensions: Extension[] = [
   history(),
   EditorState.allowMultipleSelections.of(true),
   indentOnInput(),
-  bracketMatching(),
   closeBrackets(),
   highlightActiveLine(),
   highlightSelectionMatches(),
@@ -168,6 +167,11 @@ export const Extensions: Extension[] = [
     ...searchKeymap,
     ...historyKeymap,
     ...closeBracketsKeymap,
+    {
+      key: "Tab",
+      run: indentMore,
+      shift: indentLess,
+    },
   ]),
   markdown(),
 ];

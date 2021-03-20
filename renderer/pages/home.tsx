@@ -100,14 +100,14 @@ const Home = () => {
 
       <AppDispatchContext.Provider value={dispatch}>
         <AppStateContext.Provider value={state}>
-          <HStack w="100%" h="100vh" spacing={0}>
+          <HStack w="100%" h="100vh" spacing={0} pos="relative">
             <Box w="25%" h="100%">
               <LeftBar />
             </Box>
             <Box w="50%" h="100%">
               <MainPanel />
             </Box>
-            <Box w="25%" h="100%">
+            <Box w="25%" h="100%" position="relative">
               <RightBar />
             </Box>
           </HStack>
